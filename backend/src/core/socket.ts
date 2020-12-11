@@ -13,11 +13,6 @@ export default (http: http.Server) => {
             socket.to(dialogId).emit("DIALOG:JOINED",`${name} joined the ${dialogId}`)
         })
 
-        socket.on("DIALOG:MESSAGE",(message: string)=>{
-            console.log(message)
-            io.to(socket.dialogId).emit("DIALOG:MESSAGE",message, socket.name)
-        })
-
         socket.on('disconnect',(reason: string)=>{
             console.log(`${socket.name} left the ${socket.dialogId}`)
             io.to(socket.dialogId).emit("DIALOG:LEFTED",`${socket.name} left the ${socket.dialogId}`)
