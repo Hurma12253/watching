@@ -5,6 +5,7 @@ import {
 	Route,
 	Redirect,
 } from 'react-router-dom'
+import Store from '../store/Store'
 import Header from '../components/Header'
 import WatchingRoom from '../components/WatchingRoom'
 import WriteNameScreen from '../components/WriteNameScreen'
@@ -31,7 +32,7 @@ const App = () => {
 		<>
 			<Router>
 				<Header />
-                <button onClick={()=>console.log('sosi')} style={{position: 'fixed', left: 0, top: 0}}>check store</button>
+                <button onClick={()=>console.log(Store)} style={{position: 'fixed', left: 0, top: 0}}>check store</button>
 				<Switch>
 					{!logged
 						? routes.map((el) => (

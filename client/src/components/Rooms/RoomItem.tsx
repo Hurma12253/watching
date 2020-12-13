@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useState, useEffect, createRef } from 'react'
 import styled from 'styled-components'
+import { useOnClickOutside } from '../../helpers/hooks'
 
 interface IRoom {
 	children: string
@@ -7,13 +8,48 @@ interface IRoom {
 }
 
 const RoomItem: React.FC<IRoom> = ({ children, locked }) => {
+	const [active, setActive] = useState<boolean>(false)
+	const roomRef = createRef<HTMLLIElement>()
+	const inputRef = createRef<HTMLInputElement>()
+
+	const [password, setPassword] = useState<string>('')
+	const onChangePassword = (e: any) => {
+		setPassword(e.target.value)
+	}
+
+	const clickHandler = (e: any) => {
+		if (!locked) {
+			//TODO: direct to some room
+			return
+		}
+
+		if (!active) {
+			setActive(true)
+		}
+	}
+
+	useEffect(() => {
+		inputRef.current?.focus()
+	}, [inputRef, active])
+
+	useOnClickOutside(roomRef, setActive.bind(null, false))
+
 	return (
-		<Room>
+		<Room ref={roomRef} onClick={clickHandler}>
 			<AvatarWrapper>
 				<Avatar />
 			</AvatarWrapper>
 			<Body>
-				<Name>{children}</Name>
+				{active ? (
+					<input
+						placeholder="Write password"
+						value={password}
+						onChange={onChangePassword}
+						ref={inputRef}
+					/>
+				) : (
+					<Name>{children}</Name>
+				)}
 				{locked && <img src="/assets/svg/lock.svg" alt="locked" />}
 			</Body>
 		</Room>

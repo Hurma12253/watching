@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import Store from '../store/Store'
 
 interface IWriteNameScreenProps {
 	props: any
@@ -8,12 +9,12 @@ interface IWriteNameScreenProps {
 
 const WriteNameScreen: React.FC<IWriteNameScreenProps> = ({ history }) => {
 	const [name, setName] = useState<string>('')
-	const [room, setRoom] = useState<string>('')
+	const [password, setPassword] = useState<string>('')
 
 	const submitHandler = (e: any) => {
 		e.preventDefault()
 
-		history.push(`/watchingroom?name=${name}&room=${room}`)
+		Store.login(name, password)
 	}
 
 	return (
@@ -22,11 +23,13 @@ const WriteNameScreen: React.FC<IWriteNameScreenProps> = ({ history }) => {
 			{/* {error && <h4>{error}</h4>} */}
 			<Input
 				placeholder="Write your name..."
+				value={name}
 				onChange={(e: any) => setName(e.target.value)}
 			/>
 			<Input
-				placeholder="Write room"
-				onChange={(e: any) => setRoom(e.target.value)}
+				placeholder="Write password"
+				value={password}
+				onChange={(e: any) => setPassword(e.target.value)}
 			/>
 			<Submit onClick={submitHandler}>let's go!</Submit>
 		</Container>
@@ -72,13 +75,13 @@ const Submit = styled.button`
 	cursor: pointer;
 
 	font-size: 24px;
-	color: #FFFFFF;
+	color: #ffffff;
 
 	&:hover {
 		box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 10px 1px;
 	}
 
-	&:active{
+	&:active {
 		box-shadow: rgba(0, 0, 0, 0.3) 0px 3px 10px 1px;
 	}
 `
