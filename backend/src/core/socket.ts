@@ -5,7 +5,7 @@ export default (http: http.Server) => {
     const io = new socket.Server(http)
 
     io.on('connection',(socket: any)=>{
-        socket.on('DIALOG:JOIN',(name: string, dialogId: string)=>{
+        socket.on('ROOM:JOIN',(name: string, dialogId: string)=>{
             socket.join(dialogId)
             socket.dialogId = dialogId
             socket.name = name

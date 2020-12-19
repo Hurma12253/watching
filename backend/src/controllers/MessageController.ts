@@ -3,6 +3,7 @@ import { Request } from '../types'
 import socket from 'socket.io'
 import Message from '../models/MessageModel'
 import Room from '../models/RoomModel'
+import { User } from '../models'
 
 class MessageController {
 	private io: socket.Server
@@ -12,17 +13,17 @@ class MessageController {
 
 	create = (req: Request, res: Response) => {
 		try {
-			const { message, room } = req.body
+			const { message, roomName } = req.body
 			const userId = req._id
 
-			Room.findOne({ name: room }, (err, room) => {
+			Room.findOne({ name: roomName }, (err, room) => {
 				if (err || !room) {
 					return res.status(400).json({
 						message: 'This room doesnt exists!',
 					})
 				}
 
-				if (room.userExists(userId)) {
+				if (room.userExists(userId) || !!!room.password) {
 					Message.create(
 						{
 							author: userId,
@@ -34,14 +35,22 @@ class MessageController {
 								res.status(400).send({ message: err })
 							} else {
 								res.status(200).send({ message: 'Success' })
-								this.io
-									.to(room)
-									.emit('ROOM:MESSAGE', savedMessage)
+								User.findOne({ _id: userId }).then((user) => {
+									this.io
+										.to(roomName)
+										.emit('ROOM:MESSAGE', {
+											text: savedMessage.text,
+											author: { name: user.name },
+										})
+								})
 							}
 						}
 					)
 				} else {
-					res.status(400).json({message: 'You dont have permissons to write in this room!'})
+					res.status(403).json({
+						message:
+							'You dont have permissons to write in this room!',
+					})
 				}
 			})
 		} catch (error) {

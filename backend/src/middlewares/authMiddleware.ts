@@ -8,7 +8,6 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
 		return next()
 	}
 	const token = req.header('Token')
-
 	if (token) {
 		try {
 			const decoded: any = jwt.verify(token, config.jwt.secret)
@@ -18,9 +17,9 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
 			return next()
 		} catch (error) {
 			if (error instanceof jwt.TokenExpiredError) {
-				return res.status(400).send({ message: 'Refresh token expired!' })
+				return res.status(401).send({ message: 'Token expired!' })
 			} else if (error instanceof jwt.JsonWebTokenError) {
-				return res.status(400).send({ messahe: 'Invalid refresh token!' })
+				return res.status(401).send({ messahe: 'Invalid token!' })
 			} else {
 				res.status(400).send({message: error.message})
 			}
