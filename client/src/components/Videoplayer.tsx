@@ -16,14 +16,17 @@ const Video = styled.video`
 	outline: none;
 `
 
-const Videoplayer = () => {
+interface IVideoplayer {
+	room: string
+}
+
+const Videoplayer: React.FC<IVideoplayer> = ({ room }) => {
 	return (
 		<VideoContainer>
 			<Video
 				src={
-					'http://cloud.cdnland.in/movies/771194a2536bb229de3e1d25b8a5f1b319b54427/795268fa2d93b25df4c6ef94b4f00d5f:2020120821/360.mp4'
+					'http://cloud.cdnland.in/movies/771194a2536bb229de3e1d25b8a5f1b319b54427/76a60cf3968bd4cb64a5a6dd0705e66b:2020121919/360.mp4'
 				}
-				// autoPlay
 				controls
 			></Video>
 		</VideoContainer>

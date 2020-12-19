@@ -1,61 +1,48 @@
 import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
+import { observer } from 'mobx-react-lite'
+import Store from '../store/Store'
 
-type IMessage = {
-	name: string
-	message: string
+export interface IMessage {
+	author: {
+		name: string
+	}
+	text: string
 	duty?: boolean
 }
 
-interface IChatProps {
-	io: SocketIOClient.Socket
-	room: string | string[] | null
-}
+interface IChatProps {}
 
-const Chat: React.FC<IChatProps> = ({ io, room }) => {
+const Chat: React.FC<IChatProps> = () => {
 	const [message, setMessage] = useState<string>('')
-	const [messages, setMessages] = useState<IMessage[]>([])
 	const ref = useRef<any>()
 
 	const sendMessage = (e: any) => {
 		if (!message) return
 
 		if (e.key === 'Enter') {
-			io.emit('DIALOG:MESSAGE', message)
+			Store.ChatStore.sendMessage(message)
 			setMessage('')
 		}
 	}
 
 	useEffect(() => {
 		ref.current.scrollTop = ref.current.scrollHeight
-	}, [messages])
-
-	useEffect(() => {
-		io.on('DIALOG:JOINED', (message: string, name: string) => {
-			setMessages((prev) => [...prev, { name, message, duty: true }])
-		})
-
-		io.on('DIALOG:LEFTED', (message: string, name: string) => {
-			setMessages((prev) => [...prev, { name, message, duty: true }])
-		})
-
-		io.on('DIALOG:MESSAGE', (message: string, name: string) => {
-			setMessages((prev) => [...prev, { name, message }])
-		})
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	}, [Store.ChatStore.messages])
+
 	return (
 		<ChatContainer>
 			<Title>Messages</Title>
 			<MessageContainer ref={ref}>
-				{messages.map((el, i) => (
+				{Store.ChatStore.messages.map((el, i) => (
 					<Message
 						key={Math.random() + i}
-						name={el.name}
+						name={el.author.name}
 						duty={el.duty}
 					>
-						{el.message}
+						{el.text}
 					</Message>
 				))}
 			</MessageContainer>
@@ -70,6 +57,7 @@ const Chat: React.FC<IChatProps> = ({ io, room }) => {
 }
 
 const ChatContainer = styled.div`
+	position: relative;
 	width: 100%;
 	height: 70vh;
 	padding: 13px 6px;
@@ -158,4 +146,4 @@ const Message: React.FC<IMessageProps> = ({ children, name, duty }) => {
 	)
 }
 
-export default Chat
+export default observer(Chat)

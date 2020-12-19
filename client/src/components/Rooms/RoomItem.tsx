@@ -1,6 +1,8 @@
 import React, { useState, useEffect, createRef } from 'react'
+import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { useOnClickOutside } from '../../helpers/hooks'
+import Store from '../../store/Store'
 
 interface IRoom {
 	children: string
@@ -12,6 +14,8 @@ const RoomItem: React.FC<IRoom> = ({ children, locked }) => {
 	const roomRef = createRef<HTMLLIElement>()
 	const inputRef = createRef<HTMLInputElement>()
 
+	const history = useHistory()
+
 	const [password, setPassword] = useState<string>('')
 	const onChangePassword = (e: any) => {
 		setPassword(e.target.value)
@@ -19,12 +23,21 @@ const RoomItem: React.FC<IRoom> = ({ children, locked }) => {
 
 	const clickHandler = (e: any) => {
 		if (!locked) {
-			//TODO: direct to some room
-			return
+			return history.push(`/watchingroom?room=${children}`)
 		}
 
 		if (!active) {
 			setActive(true)
+		}
+	}
+
+	const submitHandler = async (e: any) => {
+		if (e.key === 'Enter') {
+			const res = await Store.RoomsStore.checkPassword(children, password)
+			
+			if(res){
+				history.push(`/watchingroom?room=${children}`)
+			}
 		}
 	}
 
@@ -45,6 +58,7 @@ const RoomItem: React.FC<IRoom> = ({ children, locked }) => {
 						placeholder="Write password"
 						value={password}
 						onChange={onChangePassword}
+						onKeyDown={submitHandler}
 						ref={inputRef}
 					/>
 				) : (

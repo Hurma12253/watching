@@ -14,7 +14,7 @@ const WriteNameScreen: React.FC<IWriteNameScreenProps> = ({ history }) => {
 	const submitHandler = (e: any) => {
 		e.preventDefault()
 
-		Store.login(name, password)
+		Store.AuthStore.login(name, password)
 	}
 
 	return (

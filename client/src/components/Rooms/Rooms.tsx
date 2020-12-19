@@ -1,24 +1,34 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import Input from '../InputWithIcon'
 import RoomItem from './RoomItem'
+import { observer } from 'mobx-react-lite'
+import Store from '../../store/Store'
+import Error from '../Error'
+import Loader from '../Loader'
 
-interface IRoom {
+export interface IRoom {
 	name: string
 	locked?: boolean
 }
 
-const rooms: IRoom[] = [
-	{ name: 'Sweet room' },
-	{ name: 'Locked room', locked: true },
-]
+// const rooms: IRoom[] = [
+// 	{ name: 'Sweet room' },
+// 	{ name: 'room1', locked: true },
+// 	{ name: 'Locked room', locked: true },
+// ]
 
 const Rooms = () => {
+
+	useEffect(()=>{
+		Store.RoomsStore.fetchRooms()
+	},[])
 	return (
 		<RoomsContainer>
+			{Store.RoomsStore.error && <Error>{Store.RoomsStore.error}</Error>}
 			<Input imgSrc="/assets/svg/search.svg" placeholder="Search" />
 			<RoomsList>
-				{rooms.map((el) => (
+				{Store.RoomsStore.rooms.map((el) => (
 					<RoomItem key={el.name} locked={el.locked}>
 						{el.name}
 					</RoomItem>
@@ -43,4 +53,4 @@ const RoomsList = styled.ul`
 	overflow-y: auto;
 `
 
-export default Rooms
+export default observer(Rooms)

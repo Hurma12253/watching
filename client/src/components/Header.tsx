@@ -2,15 +2,27 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import Container from './Container'
+import { observer } from 'mobx-react-lite'
+import Store from '../store/Store'
 
 const Header = () => {
 	return (
 		<HeaderWrapper>
 			<Container>
 				<HeaderPanel>
-					<Link to='/'>
+					<Link to="/">
 						<Logo>Hurma RC</Logo>
 					</Link>
+					{Store.AuthStore.logged ? (
+						<Navigation>
+							<NavItem>{Store.AuthStore.name}</NavItem>
+							<NavItem onClick={() => Store.AuthStore.logout()}>
+								logout
+							</NavItem>
+						</Navigation>
+					) : (
+						<Link to="/signin">Sign in</Link>
+					)}
 				</HeaderPanel>
 			</Container>
 		</HeaderWrapper>
@@ -45,5 +57,15 @@ const Logo = styled.div`
 		transform: scale(1.1);
 	}
 `
+const Navigation = styled.div`
+	display: flex;
+`
+const NavItem = styled.div`
+	color: #ffffff;
+	font-size: 18px;
+	margin-left: 10px;
 
-export default Header
+	cursor: pointer;
+`
+
+export default observer(Header)
