@@ -19,16 +19,22 @@ export interface IRoom {
 // ]
 
 const Rooms = () => {
+	useEffect(() => {
+		Store.RoomListStore.fetchRooms()
 
-	useEffect(()=>{
-		Store.RoomsStore.fetchRooms()
-	},[])
+		return ()=>{
+			Store.RoomListStore.clear()
+		}
+	}, [])
 	return (
 		<RoomsContainer>
-			{Store.RoomsStore.error && <Error>{Store.RoomsStore.error}</Error>}
+			{Store.RoomListStore.loading && <Loader />}
+			{Store.RoomListStore.error && (
+				<Error>{Store.RoomListStore.error}</Error>
+			)}
 			<Input imgSrc="/assets/svg/search.svg" placeholder="Search" />
 			<RoomsList>
-				{Store.RoomsStore.rooms.map((el) => (
+				{Store.RoomListStore.rooms.map((el) => (
 					<RoomItem key={el.name} locked={el.locked}>
 						{el.name}
 					</RoomItem>

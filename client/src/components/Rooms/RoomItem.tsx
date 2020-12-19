@@ -33,7 +33,7 @@ const RoomItem: React.FC<IRoom> = ({ children, locked }) => {
 
 	const submitHandler = async (e: any) => {
 		if (e.key === 'Enter') {
-			const res = await Store.RoomsStore.checkPassword(children, password)
+			const res = await Store.RoomListStore.checkPassword(children, password)
 			
 			if(res){
 				history.push(`/watchingroom?room=${children}`)

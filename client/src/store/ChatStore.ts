@@ -30,7 +30,7 @@ class ChatStore {
 
 	async sendMessage(message: string) {
 		try {
-			return Api.sendMessage(message, Store.RoomsStore.currentRoom!)
+			return Api.sendMessage(message, Store.RoomStore.currentRoom!)
 		} catch (error) {
 			this.error = errorHandler(error)
 		}

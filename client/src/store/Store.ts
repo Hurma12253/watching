@@ -1,14 +1,16 @@
-import {AuthStore, RoomsStore, ChatStore} from './'
+import { AuthStore, RoomStore, ChatStore, RoomListStore } from './'
 
 class Store {
 	AuthStore: typeof AuthStore
-	RoomsStore: typeof RoomsStore
+	RoomStore: typeof RoomStore
 	ChatStore: typeof ChatStore
+	RoomListStore: typeof RoomListStore
 
 	constructor() {
 		this.AuthStore = AuthStore
-		this.RoomsStore = RoomsStore
+		this.RoomStore = RoomStore
 		this.ChatStore = ChatStore
+		this.RoomListStore = RoomListStore
 	}
 }
 

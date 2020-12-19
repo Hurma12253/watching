@@ -8,7 +8,6 @@ import Chat from './Chat'
 import Store from '../store/Store'
 import query from 'query-string'
 import Loader from './Loader'
-import { Socket } from 'dgram'
 
 const Container = styled.div`
 	max-width: 1366px;
@@ -34,7 +33,7 @@ const WatchingRoom: React.FC<IWatchingRoomProps> = () => {
 
 	useEffect(() => {
 		if (qry.room) {
-			Store.RoomsStore.connectToRoom(String(qry.room)).then((res) => {
+			Store.RoomStore.connectToRoom(String(qry.room)).then((res) => {
 				if (res) {
 					// eslint-disable-next-line react-hooks/exhaustive-deps
 					io = socket('ws://localhost:8080/', {
@@ -55,14 +54,14 @@ const WatchingRoom: React.FC<IWatchingRoomProps> = () => {
 					io.emit(
 						'ROOM:JOIN',
 						Store.AuthStore.name,
-						Store.RoomsStore.currentRoom
+						Store.RoomStore.currentRoom
 					)
 				}
 			})
 		}
 
 		return () => {
-			Store.RoomsStore.clear()
+			Store.RoomStore.clear()
 			if(io){
 				io.disconnect()
 			}
@@ -73,11 +72,11 @@ const WatchingRoom: React.FC<IWatchingRoomProps> = () => {
 
 	return (
 		<Container>
-			{Store.RoomsStore.loading ? (
+			{Store.RoomStore.loading ? (
 				<Loader />
 			) : (
 				<>
-					<Videoplayer room={Store.RoomsStore.currentRoom || ''} />
+					<Videoplayer room={Store.RoomStore.currentRoom || ''} />
 					<Chat />
 				</>
 			)}
