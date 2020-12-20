@@ -8,46 +8,44 @@ class RoomsStore {
 	error: any
 	loading: boolean
 	rooms: IRoom[]
+	permission: boolean
 
 	constructor() {
 		this.error = null
 		this.loading = true
 		this.rooms = []
+		this.permission = false
 		makeAutoObservable(this)
 	}
 
-	async checkPassword(name: string, password: string) {
-		try {
-			const { data } = await Api.checkRoomPassword(name, password)
-
-			if (data) {
-				return true
-			}
-		} catch (error) {
-			this.error = errorHandler(error)
-			return false
-		}
+	checkPassword(name: string, password: string) {
+		Api.checkRoomPassword({name, password})
+			.then(({data}) => {
+				this.permission = true
+			})
+			.catch((error) => {
+				this.error = errorHandler(error)
+			})
 	}
 
-	async fetchRooms() {
-		try {
-            this.loading = true
-            const { data } = await Api.fetchRooms()
-            this.loading = false
-
-			if (data) {
+	fetchRooms() {
+		this.loading = true
+		Api.fetchRooms()
+			.then(({data}) => {
+				this.loading = false
 				this.rooms = data
-			}
-		} catch (error) {
-            this.loading = false
-			this.error = errorHandler(error)
-		}
+			})
+			.catch((error) => {
+				this.loading = false
+				this.error = errorHandler(error)
+			})
 	}
 
 	clear() {
 		this.loading = false
 		this.error = null
 		this.rooms = []
+		this.permission = false
 	}
 }
 

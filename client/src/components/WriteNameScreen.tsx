@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import { observer } from 'mobx-react-lite'
 import Store from '../store/Store'
 
 interface IWriteNameScreenProps {
@@ -20,7 +21,7 @@ const WriteNameScreen: React.FC<IWriteNameScreenProps> = ({ history }) => {
 	return (
 		<Container>
 			<Title>What is your name?</Title>
-			{/* {error && <h4>{error}</h4>} */}
+			{Store.AuthStore.error && <h4>{Store.AuthStore.error}</h4>}
 			<Input
 				placeholder="Write your name..."
 				value={name}
@@ -86,4 +87,4 @@ const Submit = styled.button`
 	}
 `
 
-export default WriteNameScreen
+export default observer(WriteNameScreen)

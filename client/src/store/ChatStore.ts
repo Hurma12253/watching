@@ -28,12 +28,12 @@ class ChatStore {
 		this.messages = [...this.messages, message]
 	}
 
-	async sendMessage(message: string) {
-		try {
-			return Api.sendMessage(message, Store.RoomStore.currentRoom!)
-		} catch (error) {
-			this.error = errorHandler(error)
-		}
+	sendMessage(message: string) {
+		return Api.sendMessage({message, roomName: Store.RoomStore.currentRoom!}).catch(
+			(error) => {
+				this.error = errorHandler(error)
+			}
+		)
 	}
 }
 
