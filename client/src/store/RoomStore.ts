@@ -9,56 +9,49 @@ class RoomsStore {
 	currentRoom: string | null
 	loading: boolean
 	rooms: IRoom[]
+	result: boolean
 
 	constructor() {
 		this.error = null
 		this.currentRoom = null
 		this.loading = true
 		this.rooms = []
+		this.result = false
 		makeAutoObservable(this)
 	}
 
-	async connectToRoom(name: string) {
-		try {
-			this.loading = true
-			const { data } = await Api.connectToRoom(name)
-
-			if (data) {
+	connectToRoom(name: string) {
+		this.loading = true
+		return Api.connectToRoom({name})
+			.then(({ data }) => {
 				this.loading = false
 				this.currentRoom = data.name
 				Store.ChatStore.initMessages(data.messages)
-				return true
-			}
-		} catch (error) {
-			console.log(error)
-			this.error = errorHandler(error)
-			return false
-		}
+			})
+			.catch((error) => {
+				this.error = errorHandler(error)
+			})
 	}
 
-	async checkPassword(name: string, password: string) {
-		try {
-			const { data } = await Api.checkRoomPassword(name, password)
-
-			if (data) {
-				return true
-			}
-		} catch (error) {
-			this.error = errorHandler(error)
-			return false
-		}
+	checkPassword(name: string, password: string) {
+		Api.checkRoomPassword({name, password})
+			.then(({ data }) => {
+				this.result = true
+			})
+			.catch((error) => {
+				this.result = false
+				this.error = errorHandler(error)
+			})
 	}
 
-	async fetchRooms() {
-		try {
-			const { data } = await Api.fetchRooms()
-
-			if (data) {
+	fetchRooms() {
+		Api.fetchRooms()
+			.then(({ data }) => {
 				this.rooms = data
-			}
-		} catch (error) {
-			this.error = errorHandler(error)
-		}
+			})
+			.catch((error) => {
+				this.error = errorHandler(error)
+			})
 	}
 
 	clear() {

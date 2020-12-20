@@ -3,6 +3,7 @@ import { Switch, Route, Redirect } from 'react-router-dom'
 import WatchingRoom from '../components/WatchingRoom'
 import WriteNameScreen from '../components/WriteNameScreen'
 import Rooms from '../components/Rooms/Rooms'
+import { nanoid } from 'nanoid'
 
 interface IRoute {
 	exact: boolean
@@ -25,7 +26,7 @@ export const useRoutes = (isAuth: boolean) => {
 			{!isAuth
 				? routes.map((el) => (
 						<Route
-							key={el.path}
+							key={nanoid()}
 							exact={el.exact}
 							path={el.path}
 							component={el.component}
@@ -33,7 +34,7 @@ export const useRoutes = (isAuth: boolean) => {
 				  ))
 				: protectedRoutes.map((el) => (
 						<Route
-							key={el.path}
+							key={nanoid()}
 							exact={el.exact}
 							path={el.path}
 							component={el.component}

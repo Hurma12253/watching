@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Store from '../store/Store'
+import { nanoid } from 'nanoid'
 
 export interface IMessage {
 	author: {
@@ -38,7 +39,7 @@ const Chat: React.FC<IChatProps> = () => {
 			<MessageContainer ref={ref}>
 				{Store.ChatStore.messages.map((el, i) => (
 					<Message
-						key={Math.random() + i}
+						key={nanoid()}
 						name={el.author.name}
 						duty={el.duty}
 					>

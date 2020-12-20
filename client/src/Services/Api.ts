@@ -11,12 +11,7 @@ class Api {
 		this.api = axios.create(config)
 	}
 
-	login(name: string, password: string) {
-		const body = {
-			name,
-			password,
-		}
-
+	login(body: { name: string; password: string }) {
 		return this.api.post('/user/signin', body)
 	}
 
@@ -24,33 +19,19 @@ class Api {
 		return this.api.get('/user/authenticate')
 	}
 
-	fetchRooms(){
+	fetchRooms() {
 		return this.api.get('/rooms')
 	}
 
-	connectToRoom(name: string, password?: string) {
-		const body = {
-			name,
-			password,
-		}
+	connectToRoom(body: { name: string; password?: string }) {
 		return this.api.post('/room/comein', body)
 	}
 
-	checkRoomPassword(name: string, password: string){
-		const body = {
-			name,
-			password
-		}
-
+	checkRoomPassword(body: { name: string; password: string }) {
 		return this.api.post('/room/checkpassword', body)
 	}
 
-	sendMessage(message: string, room: string){
-		const body = {
-			message,
-			roomName: room
-		}
-
+	sendMessage(body: { message: string; roomName: string }) {
 		return this.api.post('/message/create', body)
 	}
 }

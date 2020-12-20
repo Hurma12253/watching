@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import styled from 'styled-components'
-import socket from 'socket.io-client'
+import { ChatSocket } from '../Services/ChatSocket'
 import Videoplayer from './Videoplayer'
 import Chat from './Chat'
 import Store from '../store/Store'
@@ -27,42 +27,22 @@ interface IWatchingRoomProps {}
 const WatchingRoom: React.FC<IWatchingRoomProps> = () => {
 	const history = useHistory()
 	const location = useLocation()
-	let io: SocketIOClient.Socket | null = null
+	let io: ChatSocket | null = null
 
 	const qry = query.parse(location.search)
 
 	useEffect(() => {
 		if (qry.room) {
-			Store.RoomStore.connectToRoom(String(qry.room)).then((res) => {
-				if (res) {
-					// eslint-disable-next-line react-hooks/exhaustive-deps
-					io = socket('ws://localhost:8080/', {
-						transports: ['websocket'],
-					})
-
-					io.on('connect', () => {
-						console.log('socket connected')
-					})
-
-					io.on('disconnect',()=>{
-						console.log('socket disconnected')
-					})
-
-					io.on('ROOM:MESSAGE', (message: any) => {
-						Store.ChatStore.addMessage(message)
-					})
-					io.emit(
-						'ROOM:JOIN',
-						Store.AuthStore.name,
-						Store.RoomStore.currentRoom
-					)
-				}
+			Store.RoomStore.connectToRoom(String(qry.room)).then(() => {
+				// eslint-disable-next-line react-hooks/exhaustive-deps
+				io = new ChatSocket()
+				io.connect()
 			})
 		}
 
 		return () => {
 			Store.RoomStore.clear()
-			if(io){
+			if (io) {
 				io.disconnect()
 			}
 		}

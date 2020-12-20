@@ -6,6 +6,7 @@ import { observer } from 'mobx-react-lite'
 import Store from '../../store/Store'
 import Error from '../Error'
 import Loader from '../Loader'
+import {nanoid} from 'nanoid'
 
 export interface IRoom {
 	name: string
@@ -35,7 +36,7 @@ const Rooms = () => {
 			<Input imgSrc="/assets/svg/search.svg" placeholder="Search" />
 			<RoomsList>
 				{Store.RoomListStore.rooms.map((el) => (
-					<RoomItem key={el.name} locked={el.locked}>
+					<RoomItem key={nanoid()} locked={el.locked}>
 						{el.name}
 					</RoomItem>
 				))}

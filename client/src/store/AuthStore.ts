@@ -1,4 +1,5 @@
 import { makeAutoObservable } from 'mobx'
+import errorHandler from '../helpers/errorHandler'
 import Api from '../Services/Api'
 
 class AuthStore {
@@ -6,42 +7,41 @@ class AuthStore {
 	token: string | null
 	name: string | null
 	error: any
+	tokenError: string | null
 
 	constructor() {
 		makeAutoObservable(this)
 		this.token = JSON.parse(localStorage.getItem('Token') || 'null')
 		this.logged = false
 		this.name = null
+		this.tokenError = null
 	}
 
-	async login(name: string, password: string) {
-		try {
-			const { data } = await Api.login(name, password)
-
-			if (data && data.token) {
+	login(name: string, password: string) {
+		Api.login({name, password})
+			.then(({ data }) => {
 				this.token = data.token
 				this.name = data.name
 				this.logged = true
 
 				localStorage.setItem('Token', JSON.stringify(this.token))
-			}
-		} catch (error) {
-			console.log(error)
-		}
+				this.clearError()
+			})
+			.catch((error) => {
+				this.error = errorHandler(error)
+			})
 	}
 
-	async authenticate() {
-		try {
-			if (this.token) {
-				const { data } = await Api.authenticate()
-
-				if (data) {
+	authenticate() {
+		if (this.token) {
+			Api.authenticate()
+				.then(({ data }) => {
 					this.name = data.name
 					this.logged = true
-				}
-			}
-		} catch (error) {
-			console.log(error)
+				})
+				.catch((error) => {
+					this.tokenError = errorHandler(error)
+				})
 		}
 	}
 
@@ -51,6 +51,11 @@ class AuthStore {
 		this.logged = false
 
 		localStorage.clear()
+	}
+
+	clearError(){
+		this.error = null
+		this.tokenError = null
 	}
 }
 

@@ -33,13 +33,17 @@ const RoomItem: React.FC<IRoom> = ({ children, locked }) => {
 
 	const submitHandler = async (e: any) => {
 		if (e.key === 'Enter') {
-			const res = await Store.RoomListStore.checkPassword(children, password)
-			
-			if(res){
-				history.push(`/watchingroom?room=${children}`)
-			}
+			Store.RoomListStore.checkPassword(children, password)
 		}
 	}
+
+	useEffect(() => {
+		if (Store.RoomListStore.permission) {
+			history.push(`/watchingroom?room=${children}`)
+		}
+		
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [Store.RoomListStore.permission])
 
 	useEffect(() => {
 		inputRef.current?.focus()
@@ -60,6 +64,7 @@ const RoomItem: React.FC<IRoom> = ({ children, locked }) => {
 						onChange={onChangePassword}
 						onKeyDown={submitHandler}
 						ref={inputRef}
+						disabled={Store.RoomListStore.loading}
 					/>
 				) : (
 					<Name>{children}</Name>
